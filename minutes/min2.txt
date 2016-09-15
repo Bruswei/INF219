@@ -1,0 +1,26 @@
+Minutes second meeting:
+members: Yijun, Brede,
+@Minutes Author session 11.09.16
+
+Work done during meeting:
+    1. Discussed following: 
+        a. Waiting for file-sharing and user requirements from Petter.
+        b. We should have a meeting with Petter regarding which kind of information does he wants to keep on his           database.
+        c. We can make a new updated webserver where Petter can write and update each mountain with a summary in           stead of HTML files he has right now. 
+           - Or we could just make a database and keep his HTML-link in the database.
+        d. We can use Auth0 to control the user-login.
+        e. Brede will be focusing on the front-end and Yijun will be focusing the back-end. 
+        f. Use Gorilla libary for front-end.
+        g. Use Go-lang to communicate between database and user-end
+        h. https on end-server
+        i. Ison document format to deliver lists to front-end
+        j. Rest-standard, HAL-standard or Json-LD.
+    
+    2. Discussed with database design.
+
+Responsibilities to next time:
+    1. Check out if UiB have a VPS-server for us to use.
+    2. Ask petter about his lists, "Hovedmeny", Prim>1000, Norges fjelltropper - struckture of the database. 
+    3. Check out if it is easier to make a database for every mountain in the world or just the onces Petter 
+       Petter has climbed.
+
