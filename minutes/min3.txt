@@ -1,0 +1,20 @@
+Minutes second meeting:
+members: Yijun, Brede, Uwe
+@Minutes Author session 16.09.16
+
+Work done during meeting:
+    1. Following were discussed during the meeting:
+        a. A meeting with Petter regarding his information he wants to keep, HTML or new database design.
+        b. Discussed about database-design, PK, how many tables should we have. 
+        c. Neutural database for other users? Own mountain database from Petter's mountains.
+            -Uwe meant we should have an own tabel for neutrual mountains and a table for what Petter has climbed. 
+        d. Maybe we should scan everything to excel and then manually checking the format before using script to create tabels for database.
+        e. Local database first then maybe deploy to webserver.
+
+Responsibilities to next time:
+    1. a meeting with Petter before next meet.
+    2. Ask petter about his lists, "Hovedmeny", Prim>1000, Norges fjelltropper - struckture of the database. 
+    3. Check out if it is easier to make a database for every mountain in the world or just the onces Petter 
+       Petter has climbed.
+    4. Find the best solution to scan the datas he has on the database.
+
