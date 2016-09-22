@@ -1,0 +1,29 @@
+Kunde-møtet:
+Personer: Peter, Brede, Yijun
+
+Tema for møtet:
+
+User requirement:
+    1. Database for å lagre alle informasjon av fjellene, slik at informasjonen ikke skal behandlet manuelt.
+    2. En mulighet for en dynamisk-liste.
+      2a. Har en automatisk sorterings funksjonhet.
+    3. Petter skal kunne enkelt oppdatere databasen med å legge inn fjellene.
+    4. Besøkende til nettsiden skal har mulighet til å sortere og blad i listen hans.
+    5. Viktigste funksjon for hjemmesiden er: Besøkende ser etter Petter sine erfaringer før dem bestemmer seg for en fjelltur.
+        5a. De fleste besøkende er ikke interessert i å gå på fjellene som ingen har gått før, men interessert i å få så mye informasjon fra Petter som mulig før.
+
+
+Mountain listen:
+  1. Alle fjellene er lagret på HTML-formater
+  2. Tid: Ikke sorter-bare.
+      2a. Unntak og de fleste er ok for sortering.
+  3. Hvor mange liste ønsker Petter å ha på siden?
+      3a. Så lenge vi kan sortere på pf og forskjellige egenskaper så er det kanskje ikke nødvendig med så mange.
+      3b. Peakbager har mange lister over fjellene i verden.
+  4. Fjellene over Norge
+      4a. Han har ikke vært på alle, ** for de som har vært på.
+  5. N*N - Kommer ikke på toppen.
+  6. Nøytral-liste av fjelltopper for besøkende til hjemmesiden.
+      6a. Kanskje ikke vits siden Peakbager er mye større og er mye brukt med samme funksjon.
+  7. Beholder HTML-system?
+      7a. Moderningseringen er kanskje best, forkast HTML-systemet.
