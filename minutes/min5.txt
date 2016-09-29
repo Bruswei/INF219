@@ -1,0 +1,23 @@
+Minutes Fourth meeting:
+Members. Brede, Yijun, Christian(new)
+@Minutes Author session 27.09.16
+
+Agenda:
+    1. Vi har fått en "teknisk-assistent", Christian Bjartli. 
+    2. Working on the database design and user requirements.
+    3. Diskutere teknisk-framgangsmåte.
+
+På møte:
+    1. Vi ble enig i å prøve oss på noe nytt enn holder oss til noe som vi kan (bruk av php rett fra databasen). Vi har da to mulige måter:
+        
+        1a. Firebase - et nyttig verktøy som kan brukes til å lage database og et API enkelt. Men verktøyet er MongDB så det er no-sql database. I et så lite prosjekt som dette så anbefaler Christian oss til å bruke firebase, det er et veldig nyttig verktøy til å bruke firebase på små prosjekter i bransjen.
+        
+        1b. Lag sql-database helt fra bunn av og programmere et API med GoLang eller Java. Dette vil ta lenger tid og er vanlig å bruke på prosjekter med store databaser. 
+
+        1c. Selv om database som er hovedprosjekt her, så vil en moderne-database designet og laget, samt med en API som er klar for videre utvikling. Slik at neste studentgruppe kan fortsette på prosjektet vårt ved å bruke moderne database med ferdig skrevet API for å utvikle på front end. 
+        
+        1d. Grunn til denne forandringen er user-requirements til Petter. Selv om vi beholde hans struktur og genere sortert liste ved hjelp av php så vil ikke løse user-requirements. Han vil fortsatt å lage et HTML-dokument for hver tur og samt legger bilder uoversiktlig rundt på serveren. 
+
+    2. Database design: Siden vi skal sikte på et mer moderne database og sluttproduktet, så er det litt forandringer i designet. Vi kan diskutere litt om dette på fredag sammen med Uwe.
+
+    3. Vi bruker et verktøy som heter Scrape til å hente inn all data på hjemmesiden til Petter. Christian har hjulpet oss til å komme i gang med scriptene.  
