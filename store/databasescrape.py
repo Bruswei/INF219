@@ -38,7 +38,7 @@ class MountainSpider(CrawlSpider):
         c.execute('CREATE TABLE IF NOT EXISTS mountain(M_ID INTEGER PRIMARY KEY, Height INTEGER, PromFactor INTEGER, Name STRING, Location STRING, Diffculity STRING, PicAddress STRING);')
         c.execute('CREATE TABLE IF NOT EXISTS attributes(M_ID INTEGER, Attribution STRING, AValue STRING, FOREIGN KEY(M_ID) REFERENCES mountain(M_ID));')
         c.execute ('CREATE TABLE IF NOT EXISTS trip(M_ID INTEGER, T_ID INTEGER PRIMARY KEY, Date DATE, smallSUM STRING, Summary STRING, FOREIGN KEY(M_ID) REFERENCES mountain(M_ID));')
-        c.execute('CREATE TABLE IF NOT EXISTS picture(T_ID INTEGER, Comments STRING, Address STRING);')
+        c.execute('CREATE TABLE IF NOT EXISTS resources(T_ID INTEGER, Comments STRING, Address STRING);')
 
 
     def parse_table(self, response):
