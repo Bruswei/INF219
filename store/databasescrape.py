@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sqlite3
-import re
 
 from scrapy import Spider
 from scrapy.spiders import CrawlSpider, Rule
@@ -118,6 +117,10 @@ process = CrawlerProcess({
     'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
 })
 
+##create_table() - BUG ATM 
 process.crawl(MountainSpider)
 process.start()
+
+c.close()
+conn.close()
         
