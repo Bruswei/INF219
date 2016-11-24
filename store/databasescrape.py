@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sqlite3
+import re
 
 from scrapy import Spider
 from scrapy.spiders import CrawlSpider, Rule
@@ -56,10 +57,10 @@ class MountainSpider(CrawlSpider):
                 when = row.xpath('.//td[4]/text()').extract_first()
                 comment = row.xpath('.//td[5]/text()').extract_first()
 
-             #   print("NUMBER   | {}".format(number))
-              #  print("NAME     | {}".format(name))
+               # print("NUMBER   | {}".format(number))
+               # print("NAME     | {}".format(name))
                # print("URL      | {}".format(url))
-                #print("HEIGHT   | {}".format(height))
+               # print("HEIGHT   | {}".format(height))
                # print("WHEN     | {}".format(when))
                # print("COMMENT  | {}".format(comment))
 
@@ -78,11 +79,12 @@ class MountainSpider(CrawlSpider):
         # Strip unnecessary newlines
         name = name.strip('\n') if name != None else None
         height = height.strip('\n') if height != None else None
-        height = height[:-1]
+        height = height[:-1] # to delete m from last string
         pf = pf.strip('\n') if pf != None else None
         location = location.strip('\n') if location != None else None
         gps = gps.strip('\n') if gps != None else None
         climbed = climbed.strip('\n') if climbed != None else None
+        climbed = climbed[8:] # removed word climbed.
         difficulty = difficulty.strip('\n') if difficulty != None else None
 
         # Select text straight in body node, strong tags right under body node, and p tags 
@@ -111,7 +113,11 @@ class MountainSpider(CrawlSpider):
         print(gps)
         print(climbed)
         print(difficulty)
-        print()
+        print(INFO)
+
+      """  c.execute("INSERT INTO mountain (Height, PromFactor, Name, Locantion, Diffculity, PicAddress) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (height, PromFactor, name, location, difficulty, picture))
+        conn.commit()"""
 
 process = CrawlerProcess({
     'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
