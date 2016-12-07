@@ -1,3 +1,5 @@
 eclipse.preferences.version=1
+encoding//script/finaljasonscrape.py=utf-8
 encoding//script/scrape.py=utf-8
 encoding//store/databasescrape.py=utf-8
+encoding//store/scrapemountains.py=utf-8

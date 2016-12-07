@@ -1,6 +1,7 @@
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -58,6 +59,15 @@ public class databaseSetup {
 						   + "address TEXT," + "FOREIGN KEY(T_ID) REFERENCES trip(T_ID))");
 			
 			// TODO: insert data from jason scan:
+			
+			PreparedStatement prep = con.prepareStatement("INSERT INTO mountain values(?,?,?);");
+			
+			/* SQL COMMANDOS
+			 *  INSERT INTO mountain (M_ID, Height, PromFactor, Name, Location, Difficulity, PicAdresse) values(1, 6962, 6962, 'Aconcagua', 'South 32.39.186, West 70.00.724', 'YDS class 2+', 'https://www.ii.uib.no/~petter/mountains/World_pic/acon_small.jpg');
+			 *  INSERT INTO trip(M_ID, Date, shortSummary, Summary) VALUES(1, 29-01-2002, ' ',' ');
+			 *  
+			 */
+		
 		}
 		
 	}
