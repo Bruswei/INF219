@@ -12,7 +12,20 @@ import re
 from html2text import html2text
 import googlemaps
 
+import sqlite3
+import sys
+
 google_api_key = "AIzaSyAjvERqHKyxaqCnEw3XBiy3PZt7L8gfC4A"
+
+# Setting up connection to database.
+# If mountains.db is not found then will make a new database called Mountains.
+db_conn = sqlite3.connect('Mountains.db')
+print("Database created.")
+
+theCursor = db_conn.cursor()
+
+db_conn.close()
+
 
 class MountainSpider(CrawlSpider):
     """Mountain spider"""
