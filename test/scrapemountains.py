@@ -14,18 +14,51 @@ import googlemaps
 
 import sqlite3
 import sys
+import os.path
 
 google_api_key = "AIzaSyAjvERqHKyxaqCnEw3XBiy3PZt7L8gfC4A"
 
 # Setting up connection to database.
 # If mountains.db is not found then will make a new database called Mountains.
+
+dbAlreadyExist = os.path.isfile('Mountains.db')
+
 db_conn = sqlite3.connect('Mountains.db')
-print("Database created.")
+
+# If we did not find Mountains.db, create an empty database and prints a message.
+if not dbAlreadyExist:
+    print("Database Created")
+else:
+    print("Database Mountains.db found..")
 
 theCursor = db_conn.cursor()
 
-db_conn.close()
+# Creating the tables if the mountain database is not created.
+# Creating following tables: mountain, attributes, trip, resources.
+if not dbAlreadyExist:
+    db_conn.execute("CREATE TABLE mountain (M_ID INTEGER PRIMARY KEY AUTOINCREMENT," 
+                   + "Height INTEGER," + "PromFactor INTEGER,"
+	           + "Name TEXT," + "Location TEXT,"
+                   + "Difficulity TEXT," + "PicAdress TEXT)")
+    db_conn.execute("CREATE TABLE attributes (M_ID INTEGER," 
+                    + "attribute TEXT," + "AValue TEXT," 
+                    + "FOREIGN KEY(M_ID) REFERENCES mountain(M_ID))")
+    db_conn.execute("CREATE TABLE trip (M_ID INTEGER," 
+                    + "T_ID INTEGER PRIMARY KEY AUTOINCREMENT," + "date REAL," 
+                    + "ShortSummary TEXT," + "Summary TEXT,"
+    		    + "FOREIGN KEY(M_ID) REFERENCES mountain(M_ID))")
+    db_conn.execute("CREATE TABLE resources (T_ID INTEGER," 
+                    + "comments TEXT," + "address TEXT," 
+                    + "FOREIGN KEY(T_ID) REFERENCES trip(T_ID))")
+    db_conn.commit()
 
+    print("Tables created!")
+
+db_conn.close()
+print("Database Closed")
+
+
+###############################################################################################################
 
 class MountainSpider(CrawlSpider):
     """Mountain spider"""
