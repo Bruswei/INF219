@@ -15,8 +15,18 @@ import googlemaps
 import sqlite3
 import sys
 import os.path
-
-google_api_key = "AIzaSyAjvERqHKyxaqCnEw3XBiy3PZt7L8gfC4A"
+            
+t_mtntable = 'mountain'
+r_height = 'Height'
+r_promfactor = 'PromFactor'
+r_name = 'Name'
+r_location = 'Location'
+r_difficulty = 'Difficulty'
+t_trips = 'trip'
+r_mountainid = 'M_ID'
+t_date = 'Date'
+t_shortsummary = 'ShortSummary'
+t_summary = 'Summary'
 
 # Setting up connection to database.
 # If mountains.db is not found then will make a new database called Mountains.
