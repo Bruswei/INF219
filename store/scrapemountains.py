@@ -10,9 +10,61 @@ import json
 import os
 import re
 from html2text import html2text
-import googlemaps
 
-google_api_key = "AIzaSyAjvERqHKyxaqCnEw3XBiy3PZt7L8gfC4A"
+import sqlite3
+import sys
+import os.path
+            
+t_mtntable = 'mountain'
+r_height = 'Height'
+r_promfactor = 'PromFactor'
+r_name = 'Name'
+r_location = 'Location'
+r_difficulty = 'Difficulty'
+t_trips = 'trip'
+r_mountainid = 'M_ID'
+t_date = 'Date'
+t_shortsummary = 'ShortSummary'
+t_summary = 'Summary'
+
+# Setting up connection to database.
+# If mountains.db is not found then will make a new database called Mountains.
+
+dbAlreadyExist = os.path.isfile('Mountains.db')
+
+db_conn = sqlite3.connect('Mountains.db')
+
+# If we did not find Mountains.db, create an empty database and prints a message.
+if not dbAlreadyExist:
+    print("Database Created")
+else:
+    print("Database Mountains.db found..")
+
+theCursor = db_conn.cursor()
+
+# Creating the tables if the mountain database is not created.
+# Creating following tables: mountain, attributes, trip, resources.
+if not dbAlreadyExist:
+    db_conn.execute("CREATE TABLE mountain (M_ID INTEGER PRIMARY KEY AUTOINCREMENT," 
+                   + "Height INTEGER," + "PromFactor INTEGER,"
+	           + "Name TEXT," + "Location TEXT,"
+                   + "Difficulty TEXT," + "PicAdress TEXT)")
+    db_conn.execute("CREATE TABLE attributes (M_ID INTEGER," 
+                    + "attribute TEXT," + "AValue TEXT," 
+                    + "FOREIGN KEY(M_ID) REFERENCES mountain(M_ID))")
+    db_conn.execute("CREATE TABLE trip (M_ID INTEGER," 
+                    + "T_ID INTEGER PRIMARY KEY AUTOINCREMENT," + "Date TEXT," 
+                    + "ShortSummary TEXT," + "Summary TEXT,"
+    		    + "FOREIGN KEY(M_ID) REFERENCES mountain(M_ID))")
+    db_conn.execute("CREATE TABLE resources (T_ID INTEGER," 
+                    + "comments TEXT," + "address TEXT," 
+                    + "FOREIGN KEY(T_ID) REFERENCES trip(T_ID))")
+    db_conn.commit()
+
+    print("Tables created!")
+
+
+###############################################################################################################
 
 class MountainSpider(CrawlSpider):
     """Mountain spider"""
@@ -23,52 +75,11 @@ class MountainSpider(CrawlSpider):
         "https://www.ii.uib.no/~petter/mountains.html"
     ]
     rules = (
-        Rule(LinkExtractor(allow=('mountains.html')), callback='parse_table'),
+        #Rule(LinkExtractor(allow=('mountains.html')), callback='parse_table'),
         Rule(LinkExtractor(allow=('[1|10|15|20|30|40|50]00mtn\/[a-zA-Z]*\.html')), callback='parse_mountain', follow=True),
-        Rule(LinkExtractor(allow=('trip-report.html')), callback='parse_tripreport'),
     )
     mountains = []
     mountainlist = []
-
-
-    def parse_table(self, response):
-        """ Parse mountain table from front page """
-
-        # This is a dirty hack to prevent scrapy from crawling the same page several times
-        # (Which it shouldn't do in the first place.)
-        if len(self.mountainlist) > 0:
-            return
-
-        # Mountain table is the second table on the website
-        mountainTable = Selector(response=response).xpath('//table[1]/tr')
-
-        for rownum, row in enumerate(mountainTable):
-            # The rows we are interested in are row 3 to 1351
-            if rownum > 2 and rownum < 1352: 
-                number = row.xpath('.//td[1]/text()').extract_first()
-                name = row.xpath('.//td[2]/a/text()').extract_first()
-                url = row.xpath('.//td[2]/a/@href').extract_first()
-                height = row.xpath('.//td[3]/text()').extract_first()
-                when = row.xpath('.//td[4]/text()').extract_first()
-                comment = row.xpath('.//td[5]/text()').extract_first()
-            
-                height_re = re.search(r'^(\d+)[ ]*m', height)
-                if height_re:
-                    height = int(height_re.group(1))
-                else:
-                    height = 0
-
-                js = dict()
-                js["number"] = number
-                js["name"] = name
-                js["url"] = url
-                js["height"] = height
-                js["when"] = when
-                js["comment"] = comment
-
-                if name: 
-                    self.mountainlist.append(js)
-
 
     def parse_mountain(self, response):
         """ Parse data from mountain info pages """
@@ -98,7 +109,6 @@ class MountainSpider(CrawlSpider):
         location = ""
         climbed = ""
         difficulty = ""
-        geocode = ""
         info = []
 
         for row in rows: 
@@ -124,12 +134,6 @@ class MountainSpider(CrawlSpider):
             elif row and row != name:
                 info.append(row + '.')
 
-        # Get geocode
-        gmaps = googlemaps.Client(key=google_api_key)
-        geocode_request = gmaps.geocode(name)
-        if geocode_request:
-            geocode = geocode_request[0]
-
         rawText = (''.join(Selector(response=response)
         .xpath('//body/text()|//body/strong|//body/p|//body/a|//body/strong/a|//body/p/a')
         .extract())
@@ -141,24 +145,10 @@ class MountainSpider(CrawlSpider):
 
         markdownText = html2text(rawText).replace("\n\n", '-----').replace("\n", ' ').replace('-----', "\n\n")
 
-        # Build json struct
-        js = dict()                  
-        js["url"] = url
-        js["name"] = name
-        js["height"] = height
-        js["primary_factor"] = pf
-        js["location"] = location
-        js["climbed"] = climbed
-        js["difficulty"] = difficulty
-        js["info"] = info
-        js["geocode"] = geocode
-        js["content"] = markdownText
-
-        self.mountains.append(js)
-
-
-    def parse_tripreport(self, response):
-        """Parse trip reports"""
+        query = 'INSERT INTO {} ({}, {}, {}, {}, {}) VALUES (?, ?, ?, ?, ?)'.format(t_mtntable, r_height, r_promfactor, r_name, r_location, r_difficulty)
+        query_trip = 'INSERT INTO {} ({}, {}, {}, {}) VALUES (last_insert_rowid(), ?, ?, ?)'.format(t_trips, r_mountainid, t_date, t_shortsummary, t_summary)
+        theCursor.execute(query, [height, pf, name, location, difficulty])
+        theCursor.execute(query_trip, [climbed, "", markdownText])
 
 
 spider = MountainSpider()
@@ -170,11 +160,5 @@ process = CrawlerProcess({
 process.crawl(spider)
 process.start()
 
-
-with open("mountain_list.json", "w") as file:
-    file.write(json.dumps(spider.mountainlist, sort_keys=True, indent=4))
-
-with open("mountains.json", "w") as file:
-    file.write(json.dumps(spider.mountains, sort_keys=True, indent=4))
-
-
+db_conn.commit()
+db_conn.close()
