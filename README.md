@@ -12,3 +12,9 @@ Goal: To make it practical for Petter to insert new mountains to his list and cr
 Petter E. Bjørstad website: 
 https://www.ii.uib.no/~petter/mountains.html
 
+
+How to get our database:
+  1. Go into store folder.
+  2. If there is a Mountains.db file, please remove before running our script.
+  3. Run scrapemountains.py and it creates a SQLite3 database and insert the information to the database.
+
