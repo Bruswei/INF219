@@ -11,10 +11,12 @@ import os
 import re
 from html2text import html2text
 
+# Imports for Sqlite3 database.
 import sqlite3
 import sys
 import os.path
             
+# Variables to store informations from HTML-sites            
 t_mtntable = 'mountain'
 r_height = 'Height'
 r_promfactor = 'PromFactor'
@@ -64,8 +66,9 @@ if not dbAlreadyExist:
     print("Tables created!")
 
 
-###############################################################################################################
+############################################################################################################### END DATABASE
 
+# Script to "crawl" trough the site and save the information in variables before storing in database.
 class MountainSpider(CrawlSpider):
     """Mountain spider"""
 
@@ -75,7 +78,6 @@ class MountainSpider(CrawlSpider):
         "https://www.ii.uib.no/~petter/mountains.html"
     ]
     rules = (
-        #Rule(LinkExtractor(allow=('mountains.html')), callback='parse_table'),
         Rule(LinkExtractor(allow=('[1|10|15|20|30|40|50]00mtn\/[a-zA-Z]*\.html')), callback='parse_mountain', follow=True),
     )
     mountains = []
@@ -144,12 +146,15 @@ class MountainSpider(CrawlSpider):
         .replace('<strong>Comments:</strong>','<h1>Comments</h1>'))
 
         markdownText = html2text(rawText).replace("\n\n", '-----').replace("\n", ' ').replace('-----', "\n\n")
-
+        
+        # Database SQLqueries to store the information we just crawled down into the database tables.
         query = 'INSERT INTO {} ({}, {}, {}, {}, {}) VALUES (?, ?, ?, ?, ?)'.format(t_mtntable, r_height, r_promfactor, r_name, r_location, r_difficulty)
         query_trip = 'INSERT INTO {} ({}, {}, {}, {}) VALUES (last_insert_rowid(), ?, ?, ?)'.format(t_trips, r_mountainid, t_date, t_shortsummary, t_summary)
         theCursor.execute(query, [height, pf, name, location, difficulty])
         theCursor.execute(query_trip, [climbed, "", markdownText])
 
+
+############################################################################################################### END SCRIPT
 
 spider = MountainSpider()
 process = CrawlerProcess({
