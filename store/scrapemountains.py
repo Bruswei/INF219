@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+## Author: Brede Yabo Kristensen & Yijun Pan Stautland
+##
+## This script is made for collecting information from Petter's HTML page and store it in a SQLite3 database.
+## If there is no SQLite3 database in the current folder, it will create a SQLite3 database from scratch.
+## 
+## INFO: This script is using python3 with some external packages which needs to be installed before running.
+##       Please install Scrapy and CrawlSpider using pip3 install commands to install missing packages. 
+##
+## HOW TO USE: Use command - python3 scrapemountains.py in terminal to run this file.
+
+# Imports for scrapy library
 from scrapy import Spider
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.crawler import CrawlerProcess
@@ -16,7 +27,8 @@ import sqlite3
 import sys
 import os.path
             
-# Variables to store informations from HTML-sites            
+# Variables to store informations from HTML-sites.
+# Used to parse into database.          
 t_mtntable = 'mountain'
 r_height = 'Height'
 r_promfactor = 'PromFactor'
@@ -167,3 +179,5 @@ process.start()
 
 db_conn.commit()
 db_conn.close()
+
+print("Database is now completed.")
