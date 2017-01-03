@@ -9,6 +9,8 @@
   "author": "Brede Yabo Kristensen & Yijun Pan Stautland ",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.14.0"
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "node-restful": "^0.2.5"
   }
 }
