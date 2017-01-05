@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Example</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+      <div class="col-sm-12">
+        <h1>Easy API example!</h1>
+        <p><button class="btn btn-primary" id="ajaxButton">Get mountain data</button></p>
+        <pre id="jsonData">Data will display here...</pre>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      var request;
+      var url = 'http://localhost:3000/mountains';
+      //var url = 'https://jsonplaceholder.typicode.com/posts/1';
+      var dataElement = document.getElementById('jsonData');
+      var button = document.getElementById('ajaxButton');
+      button.onclick = getData;
+
+      function getData() {
+        dataElement.innerHTML = 'Fetching data...';
+        button.disabled = true;
+        request = new XMLHttpRequest();
+        if (!request) { alert('Can not create http request.. Giving up :('); }
+        request.onreadystatechange = displayData;
+        request.open('GET', url);
+        request.send();
+      }
+
+      function displayData() {
+        if (request.readyState === XMLHttpRequest.DONE) {
+          button.disabled = false;
+          if (request.status === 200) {
+            dataElement.innerHTML = request.responseText;
+          } else {
+            dataElement.innerHTML = 'There was a problem.. Got a ' + request.status + ' response.';
+          }
+        }
+      }
+
+    </script>
+  </body>
+</html>

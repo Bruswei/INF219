@@ -8,6 +8,10 @@
 var express = require('express');
 var app = express();
 var fs = require('fs');
+var cors = require('cors');
+
+app.use(cors());
+app.set('json spaces', 2);
 
 // Sqlite3 database
 var sqlite3 = require('sqlite3').verbose();
@@ -31,27 +35,12 @@ var sql = "SELECT * FROM mountain;";
 app.get('/mountains', function(req, res) {
     console.log("Request handler GET was called.");
     db.all(sql, function(err,rows) {
-        res.end(JSON.stringify(rows));
+        // var rows2 = JSON.stringify(rows, null, 4);
+        res.json(rows);
     });
 });
-
-
-
-// get method to list up all mountains in json.
-// Will get result from http://ip:3000/mountains
-/*app.get('/mountains', function(req, res) {
-    
-    fs.readFile(__dirname + "/" + "mountains.json", 'utf8', function(err, data) {
-        res.end(data);
-    });
-});*/
 
 // Setting up localserver.
-var server = app.listen(3000, function() {
-    
-    var host = server.address().address;
-    var port = server.address().port;
+app.listen(3000);
 
-    console.log("Example app listening at http://%s:%s", host, port);
-});
 
