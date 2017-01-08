@@ -101,6 +101,7 @@ class MountainSpider(CrawlSpider):
         # Information from top table
         page = Selector(response=response)
         title = page.xpath('//h2/text()|//a/text()').extract_first() or ""
+        img_url = page.xpath('//table/tr/td[2]/a/@href').extract_first() or ""
         infoTable = page.xpath('//table')
 
         rows = []
