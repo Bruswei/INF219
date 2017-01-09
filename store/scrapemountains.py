@@ -162,23 +162,25 @@ class MountainSpider(CrawlSpider):
         .replace('<strong>Comments:</strong>','<h1>Comments</h1>'))
 
         markdownText = html2text(rawText).replace("\n\n", '-----').replace("\n", ' ').replace('-----', "\n\n")
-        
+
         # Database SQLqueries to store the information we just crawled down into the database tables.
         # SQL for insert Mountain table.
         query = 'INSERT INTO {} ({}, {}, {}, {}, {}) VALUES (?, ?, ?, ?, ?)'.format(t_mtntable, r_height, r_promfactor, r_name, r_location, r_picAdress)
         # SQL for insert Trip table
         query_trip = 'INSERT INTO {} ({}, {}, {}, {}) VALUES (last_insert_rowid(), ?, ?, ?)'.format(t_trips, r_mountainid, t_date, t_shortsummary, t_summary)
+        
         # SQL for insert difficulty to attribute table.
         query_difficulity = 'INSERT INTO attributes (attribute, AValue) VALUES (?, ?)'.format('difficulty',r_difficulty)
+        # SQL for insert junction table.
         query_difficulityLink = 'INSERT INTO mountainattributes (M_ID, A_ID) VALUES (?,?)'
 
         #Runs queries into database.
         theCursor.execute(query, [height, pf, name, location, img_url])
         currentID = theCursor.lastrowid
         theCursor.execute(query_trip, [climbed, "", markdownText])
-        theCursor.execute(query_difficulity, ['difficulty', difficulty])
-        theCursor.execute(query_difficulityLink,[currentID,theCursor.lastrowid])
-        
+        if difficulty:
+            theCursor.execute(query_difficulity, ['difficulty', difficulty])
+            theCursor.execute(query_difficulityLink,[currentID,theCursor.lastrowid])
 
 
 
