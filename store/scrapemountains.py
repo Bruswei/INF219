@@ -63,9 +63,8 @@ if not dbAlreadyExist:
                    + "Height INTEGER," + "PromFactor INTEGER,"
 	           + "Name TEXT," + "Location TEXT,"
                    + "Difficulty TEXT," + "PicAdress TEXT)")
-    db_conn.execute("CREATE TABLE attributes (M_ID INTEGER," 
-                    + "attribute TEXT," + "AValue TEXT," 
-                    + "FOREIGN KEY(M_ID) REFERENCES mountain(M_ID))")
+    db_conn.execute("CREATE TABLE attributes (A_ID INTEGER PRIMARY KEY AUTOINCREMENT," 
+                    + "attribute TEXT," + "AValue TEXT,")
     db_conn.execute("CREATE TABLE trip (M_ID INTEGER," 
                     + "T_ID INTEGER PRIMARY KEY AUTOINCREMENT," + "Date TEXT," 
                     + "ShortSummary TEXT," + "Summary TEXT,"
@@ -73,6 +72,10 @@ if not dbAlreadyExist:
     db_conn.execute("CREATE TABLE resources (T_ID INTEGER," 
                     + "comments TEXT," + "address TEXT," 
                     + "FOREIGN KEY(T_ID) REFERENCES trip(T_ID))")
+    db_conn.execute("CREATE TABLE (M_ID int NOT NULL, " + "A_ID int NOT NULL,"
+                    + "CONSTRAINT PK_mountainattribute PRIMARY KEY (" + "M_ID, " + " A_ID),"
+                    + "FOREIGN KEY (M_ID) REFERENCES mountain (M_ID),"
+                    + "FOREIGN KEY (A_ID) REFERENCES attributes (A_ID))")
     db_conn.commit()
 
     print("Tables created!")
