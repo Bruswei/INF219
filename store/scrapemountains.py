@@ -40,6 +40,7 @@ r_mountainid = 'M_ID'
 t_date = 'Date'
 t_shortsummary = 'ShortSummary'
 t_summary = 'Summary'
+r_picAdress = 'PicAdress'
 
 # Setting up connection to database.
 # If mountains.db is not found then will make a new database called Mountains.
@@ -61,8 +62,7 @@ theCursor = db_conn.cursor()
 if not dbAlreadyExist:
     db_conn.execute("CREATE TABLE mountain (M_ID INTEGER PRIMARY KEY AUTOINCREMENT," 
                    + "Height INTEGER," + "PromFactor INTEGER,"
-	           + "Name TEXT," + "Location TEXT,"
-                   + "Difficulty TEXT," + "PicAdress TEXT)")
+	           + "Name TEXT," + "Location TEXT," + "PicAdress TEXT)")
     db_conn.execute("CREATE TABLE attributes (A_ID INTEGER PRIMARY KEY AUTOINCREMENT," 
                     + "attribute TEXT," + "AValue TEXT)")
     db_conn.execute("CREATE TABLE trip (M_ID INTEGER," 
@@ -164,9 +164,9 @@ class MountainSpider(CrawlSpider):
         markdownText = html2text(rawText).replace("\n\n", '-----').replace("\n", ' ').replace('-----', "\n\n")
         
         # Database SQLqueries to store the information we just crawled down into the database tables.
-        query = 'INSERT INTO {} ({}, {}, {}, {}, {}) VALUES (?, ?, ?, ?, ?)'.format(t_mtntable, r_height, r_promfactor, r_name, r_location, r_difficulty)
+        query = 'INSERT INTO {} ({}, {}, {}, {}, {}) VALUES (?, ?, ?, ?, ?)'.format(t_mtntable, r_height, r_promfactor, r_name, r_location, r_picAdress)
         query_trip = 'INSERT INTO {} ({}, {}, {}, {}) VALUES (last_insert_rowid(), ?, ?, ?)'.format(t_trips, r_mountainid, t_date, t_shortsummary, t_summary)
-        theCursor.execute(query, [height, pf, name, location, difficulty])
+        theCursor.execute(query, [height, pf, name, location, img_url])
         theCursor.execute(query_trip, [climbed, "", markdownText])
 
 
