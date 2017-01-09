@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+## Author: Brede Yabo Kristensen & Yijun Pan Stautland
+##
+## This script is made for collecting information from Petter's HTML page and store it in a SQLite3 database.
+## If there is no SQLite3 database in the current folder, it will create a SQLite3 database from scratch.
+## 
+## INFO: This script is using python3 with some external packages which needs to be installed before running.
+##       Please install Scrapy and CrawlSpider using pip3 install commands to install missing packages. 
+##
+## HOW TO USE: Use command - python3 scrapemountains.py in terminal to run this file.
+
+# Imports for scrapy library
 from scrapy import Spider
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.crawler import CrawlerProcess
@@ -11,10 +22,13 @@ import os
 import re
 from html2text import html2text
 
+# Imports for Sqlite3 database.
 import sqlite3
 import sys
 import os.path
             
+# Variables to store informations from HTML-sites.
+# Used to parse into database.          
 t_mtntable = 'mountain'
 r_height = 'Height'
 r_promfactor = 'PromFactor'
@@ -26,6 +40,7 @@ r_mountainid = 'M_ID'
 t_date = 'Date'
 t_shortsummary = 'ShortSummary'
 t_summary = 'Summary'
+r_picAdress = 'PicAdress'
 
 # Setting up connection to database.
 # If mountains.db is not found then will make a new database called Mountains.
@@ -47,11 +62,9 @@ theCursor = db_conn.cursor()
 if not dbAlreadyExist:
     db_conn.execute("CREATE TABLE mountain (M_ID INTEGER PRIMARY KEY AUTOINCREMENT," 
                    + "Height INTEGER," + "PromFactor INTEGER,"
-	           + "Name TEXT," + "Location TEXT,"
-                   + "Difficulty TEXT," + "PicAdress TEXT)")
-    db_conn.execute("CREATE TABLE attributes (M_ID INTEGER," 
-                    + "attribute TEXT," + "AValue TEXT," 
-                    + "FOREIGN KEY(M_ID) REFERENCES mountain(M_ID))")
+	           + "Name TEXT," + "Location TEXT," + "PicAdress TEXT)")
+    db_conn.execute("CREATE TABLE attributes (A_ID INTEGER PRIMARY KEY AUTOINCREMENT," 
+                    + "attribute TEXT," + "AValue TEXT)")
     db_conn.execute("CREATE TABLE trip (M_ID INTEGER," 
                     + "T_ID INTEGER PRIMARY KEY AUTOINCREMENT," + "Date TEXT," 
                     + "ShortSummary TEXT," + "Summary TEXT,"
@@ -59,13 +72,18 @@ if not dbAlreadyExist:
     db_conn.execute("CREATE TABLE resources (T_ID INTEGER," 
                     + "comments TEXT," + "address TEXT," 
                     + "FOREIGN KEY(T_ID) REFERENCES trip(T_ID))")
+    db_conn.execute("CREATE TABLE mountainattributes (M_ID INTEGER NOT NULL, " + "A_ID INTEGER NOT NULL,"
+                    + "CONSTRAINT PK_mountainattribute PRIMARY KEY (" + "M_ID, " + " A_ID),"
+                    + "FOREIGN KEY(M_ID) REFERENCES mountain(M_ID),"
+                    + "FOREIGN KEY(A_ID) REFERENCES attributes(A_ID))")
     db_conn.commit()
 
     print("Tables created!")
 
 
-###############################################################################################################
+############################################################################################################### END DATABASE
 
+# Script to "crawl" trough the site and save the information in variables before storing in database.
 class MountainSpider(CrawlSpider):
     """Mountain spider"""
 
@@ -75,7 +93,6 @@ class MountainSpider(CrawlSpider):
         "https://www.ii.uib.no/~petter/mountains.html"
     ]
     rules = (
-        #Rule(LinkExtractor(allow=('mountains.html')), callback='parse_table'),
         Rule(LinkExtractor(allow=('[1|10|15|20|30|40|50]00mtn\/[a-zA-Z]*\.html')), callback='parse_mountain', follow=True),
     )
     mountains = []
@@ -87,6 +104,7 @@ class MountainSpider(CrawlSpider):
         # Information from top table
         page = Selector(response=response)
         title = page.xpath('//h2/text()|//a/text()').extract_first() or ""
+        img_url = page.xpath('//table/tr/td[2]/a/@href').extract_first() or ""
         infoTable = page.xpath('//table')
 
         rows = []
@@ -145,11 +163,28 @@ class MountainSpider(CrawlSpider):
 
         markdownText = html2text(rawText).replace("\n\n", '-----').replace("\n", ' ').replace('-----', "\n\n")
 
-        query = 'INSERT INTO {} ({}, {}, {}, {}, {}) VALUES (?, ?, ?, ?, ?)'.format(t_mtntable, r_height, r_promfactor, r_name, r_location, r_difficulty)
+        # Database SQLqueries to store the information we just crawled down into the database tables.
+        # SQL for insert Mountain table.
+        query = 'INSERT INTO {} ({}, {}, {}, {}, {}) VALUES (?, ?, ?, ?, ?)'.format(t_mtntable, r_height, r_promfactor, r_name, r_location, r_picAdress)
+        # SQL for insert Trip table
         query_trip = 'INSERT INTO {} ({}, {}, {}, {}) VALUES (last_insert_rowid(), ?, ?, ?)'.format(t_trips, r_mountainid, t_date, t_shortsummary, t_summary)
-        theCursor.execute(query, [height, pf, name, location, difficulty])
-        theCursor.execute(query_trip, [climbed, "", markdownText])
+        
+        # SQL for insert difficulty to attribute table.
+        query_difficulity = 'INSERT INTO attributes (attribute, AValue) VALUES (?, ?)'.format('difficulty',r_difficulty)
+        # SQL for insert junction table.
+        query_difficulityLink = 'INSERT INTO mountainattributes (M_ID, A_ID) VALUES (?,?)'
 
+        #Runs queries into database.
+        theCursor.execute(query, [height, pf, name, location, img_url])
+        currentID = theCursor.lastrowid
+        theCursor.execute(query_trip, [climbed, "", markdownText])
+        if difficulty:
+            theCursor.execute(query_difficulity, ['difficulty', difficulty])
+            theCursor.execute(query_difficulityLink,[currentID,theCursor.lastrowid])
+
+
+
+############################################################################################################### END SCRIPT
 
 spider = MountainSpider()
 process = CrawlerProcess({
@@ -162,3 +197,5 @@ process.start()
 
 db_conn.commit()
 db_conn.close()
+
+print("Database is now completed.")
