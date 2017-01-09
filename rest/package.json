@@ -1,5 +1,5 @@
 {
-  "name": "REST_API Mountain",
+  "name": "restapi-mountain",
   "version": "0.1.0",
   "description": "This folder contains our version of REST API.",
   "main": "index.js",
