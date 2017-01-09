@@ -164,10 +164,15 @@ class MountainSpider(CrawlSpider):
         markdownText = html2text(rawText).replace("\n\n", '-----').replace("\n", ' ').replace('-----', "\n\n")
         
         # Database SQLqueries to store the information we just crawled down into the database tables.
+        # SQL for insert Mountain table.
         query = 'INSERT INTO {} ({}, {}, {}, {}, {}) VALUES (?, ?, ?, ?, ?)'.format(t_mtntable, r_height, r_promfactor, r_name, r_location, r_picAdress)
         query_trip = 'INSERT INTO {} ({}, {}, {}, {}) VALUES (last_insert_rowid(), ?, ?, ?)'.format(t_trips, r_mountainid, t_date, t_shortsummary, t_summary)
+        query_difficulity = 'INSERT INTO attributes ( attribute, AValue) VALUES (?, ?)'.format('difficulty',r_difficulty)
         theCursor.execute(query, [height, pf, name, location, img_url])
         theCursor.execute(query_trip, [climbed, "", markdownText])
+        theCursor.execute(query_difficulity, ['difficulty', difficulty])
+        
+
 
 
 ############################################################################################################### END SCRIPT
